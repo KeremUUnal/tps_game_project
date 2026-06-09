@@ -205,7 +205,7 @@ public class WeaponController : MonoBehaviour
         if (!gunEquipped && isAiming)
             SetAiming(false);
 
-        if (crosshairController != null)
+         if (crosshairController != null)
             crosshairController.SetEquipped(gunEquipped);
 
         Debug.Log(gunEquipped ? "Silah çekildi" : "Silah kaldýrýldý");
@@ -227,6 +227,7 @@ public class WeaponController : MonoBehaviour
     private void SetAiming(bool aiming)
     {
         isAiming = aiming;
+        
 
         if (anim != null)
             anim.SetBool(AimingHash, aiming);
@@ -261,6 +262,7 @@ public class WeaponController : MonoBehaviour
     private void OnFire(InputAction.CallbackContext context)
     {
         if (!gunEquipped) return;
+        if (!isAiming) return;
         if (Time.time < nextFireTime) return;
 
         nextFireTime = Time.time + fireRate;
