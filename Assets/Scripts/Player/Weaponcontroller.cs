@@ -10,6 +10,16 @@ using System.Collections;
 /// </summary>
 public class WeaponController : MonoBehaviour
 {
+    [Header("Ses")]
+    [Tooltip("Ateþ sesi")]
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private float shootVolume = 0.5f;
+
+    [Header("Muzzle Flash")]
+    [Tooltip("FirePoint altýndaki muzzle flash objesi (baþlangýçta deaktif)")]
+    [SerializeField] private GameObject muzzleFlash;
+    [SerializeField] private float flashDuration = 0.05f;
+
     [Header("Kamera")]
     [SerializeField] private CinemachineCamera followCamera;
 
@@ -18,10 +28,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private Transform firePoint;
 
     [Header("Mermi Trail")]
-    [Tooltip("TrailRenderer'lý BulletTrail prefabý")]
     [SerializeField] private GameObject bulletTrailPrefab;
-
-    [Tooltip("Mermi görsel hýzý (yüksek = daha hýzlý iz)")]
     [SerializeField] private float bulletSpeed = 80f;
 
     [Header("Aim FOV Ayarlarý")]
@@ -74,6 +81,7 @@ public class WeaponController : MonoBehaviour
     private float originalSprintSpeed;
     private CinemachineThirdPersonFollow thirdPersonFollow;
     private PlayerInputActions inputActions;
+    private AudioSource audioSource;
 
     // Animator hash
     private static readonly int GunEquipHash = Animator.StringToHash("GunEquipped");
@@ -147,6 +155,20 @@ public class WeaponController : MonoBehaviour
 
         if (weaponObject != null)
             weaponObject.SetActive(false);
+
+        // Muzzle flash baþlangýçta gizli
+        if (muzzleFlash != null)
+            muzzleFlash.SetActive(false);
+
+        // AudioSource yoksa otomatik oluþtur
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.loop = false;
+            audioSource.spatialBlend = 0f;
+        }
     }
 
     private void Update()
@@ -205,7 +227,7 @@ public class WeaponController : MonoBehaviour
         if (!gunEquipped && isAiming)
             SetAiming(false);
 
-         if (crosshairController != null)
+        if (crosshairController != null)
             crosshairController.SetEquipped(gunEquipped);
 
         Debug.Log(gunEquipped ? "Silah çekildi" : "Silah kaldýrýldý");
@@ -227,7 +249,6 @@ public class WeaponController : MonoBehaviour
     private void SetAiming(bool aiming)
     {
         isAiming = aiming;
-        
 
         if (anim != null)
             anim.SetBool(AimingHash, aiming);
@@ -267,18 +288,35 @@ public class WeaponController : MonoBehaviour
 
         nextFireTime = Time.time + fireRate;
 
+        // Animasyon
         if (anim != null)
             anim.SetTrigger(ShootHash);
 
+        // Crosshair pulse
         if (crosshairController != null)
             crosshairController.TriggerShootPulse();
 
+        // Ateþ sesi
+        if (shootSound != null && audioSource != null)
+            audioSource.PlayOneShot(shootSound, shootVolume);
+
+        // Muzzle flash
+        if (muzzleFlash != null)
+            StartCoroutine(ShowMuzzleFlash());
+
+        // Raycast
         ShootRaycast();
+    }
+
+    private IEnumerator ShowMuzzleFlash()
+    {
+        muzzleFlash.SetActive(true);
+        yield return new WaitForSeconds(flashDuration);
+        muzzleFlash.SetActive(false);
     }
 
     private void ShootRaycast()
     {
-        // Raycast kamera merkezinden — crosshair'in baktýðý yer
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         Vector3 targetPoint;
 
@@ -297,14 +335,12 @@ public class WeaponController : MonoBehaviour
             targetPoint = ray.GetPoint(range);
         }
 
-        // Trail izi: FirePoint'ten hedef noktaya
         if (firePoint != null && bulletTrailPrefab != null)
             StartCoroutine(SpawnBulletTrail(firePoint.position, targetPoint));
     }
 
     private IEnumerator SpawnBulletTrail(Vector3 start, Vector3 end)
     {
-        // Prefabý oluþtur
         GameObject trail = Instantiate(bulletTrailPrefab, start, Quaternion.identity);
         TrailRenderer tr = trail.GetComponent<TrailRenderer>();
 
@@ -312,7 +348,6 @@ public class WeaponController : MonoBehaviour
         float duration = distance / bulletSpeed;
         float elapsed = 0f;
 
-        // FirePoint'ten hedefe doðru hareket ettir
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
@@ -323,7 +358,6 @@ public class WeaponController : MonoBehaviour
 
         trail.transform.position = end;
 
-        // Trail'in solmasý için biraz bekle sonra yok et
         if (tr != null)
         {
             float trailTime = tr.time;
