@@ -5,28 +5,27 @@ using System.Collections;
 using TMPro;
 
 /// <summary>
-/// Oyun bitiş noktası. Anahtarı alan oyuncu gemiye dönünce oyun biter.
+/// Oyun bitiş noktası. Anahtarı alan VE tüm düşmanları yenen oyuncu gemiye dönünce oyun biter.
 /// Geminin yanına boş obje koy, Collider → Is Trigger yap.
 /// </summary>
 public class GameFinish : MonoBehaviour
 {
     [Header("UI")]
-    [Tooltip("Kazanma ekranı paneli")]
     [SerializeField] private GameObject winPanel;
-
-    [Tooltip("Mesaj text'i (opsiyonel)")]
     [SerializeField] private TMP_Text messageText;
 
-    [Header("Anahtarsız Mesaj")]
-    [Tooltip("Anahtar yokken gösterilecek mesaj")]
+    [Header("Uyarı Mesajları")]
     [SerializeField] private string noKeyMessage = "Önce anahtarı bulmalısın!";
-
-    [Tooltip("Anahtar yokken mesaj text'i")]
+    [SerializeField] private string enemiesLeftMessage = "Önce tüm düşmanları yenmelisin! Kalan: ";
     [SerializeField] private TMP_Text hintText;
 
     [Header("Ayarlar")]
     [SerializeField] private float returnToMenuDelay = 5f;
     [SerializeField] private string mainMenuSceneName = "MainMenu";
+
+    [Header("Düşman Takibi")]
+    [Tooltip("Düşman tag'i (varsayılan: Enemy)")]
+    [SerializeField] private string enemyTag = "Enemy";
 
     private bool gameFinished = false;
 
@@ -44,19 +43,20 @@ public class GameFinish : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         if (gameFinished) return;
 
-        // Anahtar var mı kontrol et
+        // 1. Anahtar var mı?
         if (!KeyPickup.hasKey)
         {
-            // İpucu göster
-            if (hintText != null)
-            {
-                hintText.text = noKeyMessage;
-                hintText.gameObject.SetActive(true);
-                CancelInvoke(nameof(HideHint));
-                Invoke(nameof(HideHint), 3f);
-            }
+            ShowHint(noKeyMessage);
+            Debug.Log("Anahtar yok!");
+            return;
+        }
 
-            Debug.Log("Anahtar yok! Önce anahtarı bul.");
+        // 2. Düşmanlar bitti mi?
+        int remainingEnemies = CountAliveEnemies();
+        if (remainingEnemies > 0)
+        {
+            ShowHint(enemiesLeftMessage + remainingEnemies);
+            Debug.Log($"Kalan düşman: {remainingEnemies}");
             return;
         }
 
@@ -65,27 +65,51 @@ public class GameFinish : MonoBehaviour
         WinGame();
     }
 
+    private int CountAliveEnemies()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+        int alive = 0;
+        foreach (GameObject enemy in enemies)
+        {
+            // Aktif olanlar = hayatta
+            if (enemy.activeInHierarchy)
+                alive++;
+        }
+        return alive;
+    }
+
+    private void ShowHint(string message)
+    {
+        if (hintText == null) return;
+        hintText.text = message;
+        hintText.gameObject.SetActive(true);
+        CancelInvoke(nameof(HideHint));
+        Invoke(nameof(HideHint), 3f);
+    }
+
+    private void HideHint()
+    {
+        if (hintText != null)
+            hintText.gameObject.SetActive(false);
+    }
+
     private void WinGame()
     {
         Debug.Log("Tebrikler! Oyunu kazandın!");
 
-        // Oyuncuyu durdur
-        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<UnityEngine.InputSystem.PlayerInput>();
+        var playerInput = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerInput>();
         if (playerInput != null)
             playerInput.enabled = false;
 
-        // Kazanma ekranı göster
         if (winPanel != null)
             winPanel.SetActive(true);
 
         if (messageText != null)
-            messageText.text = "TEBRİKLER!\nAnahtarı buldun ve gemiye döndün!";
+            messageText.text = "TEBRİKLER!\nAnahtarı buldun, düşmanları yendin ve gemiye döndün!";
 
-        // Mouse göster
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Ana menüye dön (realtime bekle, timeScale 0 olsa bile çalışır)
         StartCoroutine(ReturnToMenuAfterDelay());
     }
 
@@ -94,11 +118,5 @@ public class GameFinish : MonoBehaviour
         yield return new WaitForSecondsRealtime(returnToMenuDelay);
         Time.timeScale = 1f;
         SceneManager.LoadScene(mainMenuSceneName);
-    }
-
-    private void HideHint()
-    {
-        if (hintText != null)
-            hintText.gameObject.SetActive(false);
     }
 }

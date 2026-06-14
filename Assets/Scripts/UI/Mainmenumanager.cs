@@ -42,12 +42,9 @@ public class MainMenuManager : MonoBehaviour
         SetupFullscreenToggle();
     }
 
-    // ==================== KURULUM ====================
-
     private void SetupVolumeSlider()
     {
         if (volumeSlider == null) return;
-
         volumeSlider.minValue = 0f;
         volumeSlider.maxValue = 100f;
         volumeSlider.wholeNumbers = true;
@@ -59,13 +56,9 @@ public class MainMenuManager : MonoBehaviour
     private void SetupQualityDropdown()
     {
         if (qualityDropdown == null) return;
-
         qualityDropdown.ClearOptions();
-        List<string> options = new List<string> { "Düþük", "Orta", "Yüksek", "Ultra" };
-        qualityDropdown.AddOptions(options);
-
-        int saved = PlayerPrefs.GetInt("Quality", QualitySettings.GetQualityLevel());
-        if (saved >= options.Count) saved = options.Count - 1;
+        qualityDropdown.AddOptions(new List<string> { "Düþük", "Orta", "Yüksek", "Ultra" });
+        int saved = PlayerPrefs.GetInt("Quality", 2);
         qualityDropdown.value = saved;
         qualityDropdown.onValueChanged.AddListener(OnQualityChanged);
     }
@@ -73,19 +66,15 @@ public class MainMenuManager : MonoBehaviour
     private void SetupResolutionDropdown()
     {
         if (resolutionDropdown == null) return;
-
         resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
-
         List<string> options = new List<string>();
         int currentIndex = 0;
 
         for (int i = 0; i < resolutions.Length; i++)
         {
             string option = resolutions[i].width + " x " + resolutions[i].height;
-            if (!options.Contains(option))
-                options.Add(option);
-
+            if (!options.Contains(option)) options.Add(option);
             if (resolutions[i].width == Screen.currentResolution.width &&
                 resolutions[i].height == Screen.currentResolution.height)
                 currentIndex = options.Count - 1;
@@ -99,17 +88,12 @@ public class MainMenuManager : MonoBehaviour
     private void SetupFullscreenToggle()
     {
         if (fullscreenToggle == null) return;
-
         fullscreenToggle.isOn = Screen.fullScreen;
         fullscreenToggle.onValueChanged.AddListener(OnFullscreenChanged);
     }
 
     // ==================== BUTONLAR ====================
-
-    public void OnPlayButton()
-    {
-        SceneManager.LoadScene(gameSceneName);
-    }
+    public void OnPlayButton() => SceneManager.LoadScene(gameSceneName);
 
     public void OnSettingsButton()
     {
@@ -132,22 +116,25 @@ public class MainMenuManager : MonoBehaviour
     }
 
     // ==================== AYAR DEÐÝÞÝKLÝKLERÝ ====================
-
     private void OnVolumeChanged(float value)
     {
         AudioListener.volume = value / 100f;
         PlayerPrefs.SetFloat("Volume", value);
         PlayerPrefs.Save();
-
         if (volumeText != null)
             volumeText.text = Mathf.RoundToInt(value) + "%";
     }
 
     private void OnQualityChanged(int index)
     {
-        QualitySettings.SetQualityLevel(index);
         PlayerPrefs.SetInt("Quality", index);
         PlayerPrefs.Save();
+
+        // GraphicsManager varsa onu kullan, yoksa basit QualitySettings
+        if (GraphicsManager.Instance != null)
+            GraphicsManager.Instance.ApplyQuality(index);
+        else
+            QualitySettings.SetQualityLevel(index);
     }
 
     private void OnResolutionChanged(int index)

@@ -194,9 +194,13 @@ public class PauseMenu : MonoBehaviour
 
     private void OnQualityChanged(int index)
     {
-        QualitySettings.SetQualityLevel(index);
         PlayerPrefs.SetInt("Quality", index);
         PlayerPrefs.Save();
+
+        if (GraphicsManager.Instance != null)
+            GraphicsManager.Instance.ApplyQuality(index);
+        else
+            QualitySettings.SetQualityLevel(index);
     }
 
     private void OnResolutionChanged(int index)
