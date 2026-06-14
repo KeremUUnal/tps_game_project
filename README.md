@@ -1,4 +1,4 @@
-# Pirate's Passage — Zamanda Yolculuk TPS Oyunu
+# Korsan Temalı TPS Oyunu Okul Projesi
 
 Unity ile geliştirilmiş, zamanda yolculuk temalı üçüncü şahıs nişancı (TPS) oyun prototipi. Oyuncu, geçmiş ve gelecek arasında yolculuk yapan bir korsan karakterini kontrol ederek gizli bir hazineyi ve gizemli bir geçidi keşfetmeye çalışır.
 
