@@ -1,151 +1,151 @@
-# Pirate's Passage — Time Travel TPS Game
+# Pirate's Passage — Zamanda Yolculuk TPS Oyunu
 
-A third-person shooter prototype built in Unity, featuring a pirate character who travels between past and future to uncover a hidden treasure and a mysterious gateway.
+Unity ile geliştirilmiş, zamanda yolculuk temalı üçüncü şahıs nişancı (TPS) oyun prototipi. Oyuncu, geçmiş ve gelecek arasında yolculuk yapan bir korsan karakterini kontrol ederek gizli bir hazineyi ve gizemli bir geçidi keşfetmeye çalışır.
 
-> Developed as an academic project (March – June 2026)
+> Akademik proje olarak geliştirilmiştir (Mart – Haziran 2026)
 
 ---
 
-## About
+## Hakkında
 
-Pirate's Passage is a story-driven TPS where players control a time-traveling pirate navigating two distinct eras. The game blends combat, exploration, and puzzle-solving as the player collects keys, gathers gold, and fights enemies to reach the final portal.
+Pirate's Passage, iki farklı zaman diliminde geçen hikaye odaklı bir TPS oyunudur. Oyuncu; savaş, keşif ve bulmaca çözme mekaniklerini bir arada kullanarak anahtarlar toplar, altın biriktirir ve düşmanlarla savaşarak son portala ulaşmayı hedefler.
 
-## Gameplay Features
+## Oyun Özellikleri
 
-- **Third-Person Shooter Combat** — Aim, shoot, and take down enemies with raycast-based gunplay, muzzle flash effects, and hit feedback
-- **Weapon System** — Draw/holster weapon (Q), aim with FOV zoom (Right Click), and fire (Left Click)
-- **Enemy AI** — NavMesh-based enemy patrolling and attacking with health systems
-- **Inventory & Collectibles** — Gold coin pickups, key collection for locked doors, and health pickups
-- **UI System** — Health bar (HUD), crosshair, inventory display, pause menu, win screen, and main menu with animated buttons
-- **Portal & Level Progression** — Portal system for scene transitions and a game finish sequence
-- **Audio** — Background music, gunshot SFX, coin pickup sounds, punch impacts, and ambient wind
-- **Graphics Settings** — In-game graphics quality manager for different hardware profiles
+- **Üçüncü Şahıs Savaş Sistemi** — Nişan alma, ateş etme, raycast tabanlı atış, namlu parlaması ve hasar geri bildirimi
+- **Silah Sistemi** — Silah çekme/kılıflama (Q), FOV yakınlaştırmalı nişan alma (Sağ Tık), ateş etme (Sol Tık)
+- **Düşman Yapay Zekası** — NavMesh tabanlı devriye, takip ve saldırı davranışları
+- **Envanter ve Toplanabilir Eşyalar** — Altın toplama, kilitli kapılar için anahtar bulma, can yenileme
+- **Arayüz Sistemi** — Can barı (HUD), nişangah, envanter gösterimi, duraklat menüsü, kazanma ekranı ve animasyonlu ana menü
+- **Portal ve Seviye Geçişi** — Sahne geçişleri için portal sistemi ve oyun bitiş sekansı
+- **Ses Sistemi** — Arka plan müziği, silah sesi, altın toplama efekti, yumruk etkisi ve rüzgar ortam sesi
+- **Grafik Ayarları** — Farklı donanımlar için oyun içi grafik kalitesi yöneticisi
 
-## Scenes
+## Sahneler
 
-| Scene | Description |
-|-------|-------------|
-| `MainMenu` | Animated main menu with stylized buttons and settings |
-| `Level_Past` | Main gameplay level set in the past era |
+| Sahne | Açıklama |
+|-------|----------|
+| `MainMenu` | Animasyonlu ana menü, stilize butonlar ve ayarlar |
+| `Level_Past` | Geçmiş dönemde geçen ana oynanış seviyesi |
 
-## Project Structure
+## Proje Yapısı
 
 ```
 Assets/
-├── Animations/          # Character & enemy animation clips (.fbx)
-├── Audio/               # Sound effects and music
-├── Materials/           # Custom materials (sand, future theme)
-├── Prefabs/             # Reusable game objects
-├── Scenes/              # Game scenes (MainMenu, Level_Past)
+├── Animations/          # Karakter ve düşman animasyon klipleri (.fbx)
+├── Audio/               # Ses efektleri ve müzikler
+├── Materials/           # Özel materyaller (kum, gelecek teması)
+├── Prefabs/             # Yeniden kullanılabilir oyun nesneleri
+├── Scenes/              # Oyun sahneleri (MainMenu, Level_Past)
 ├── Scripts/
 │   ├── Player/          # WeaponController, CombatSystem, PlayerDeath
 │   ├── Enemy/           # EnemyAI, HealthSystem
 │   ├── Systems/         # Portal, GoldManager, KeyPickup, DoorController, GameFinish, GraphicsManager
 │   └── UI/              # PlayerHUD, Crosshair, PauseMenu, MainMenuManager, WinScreen, HealthPickup
-├── Settings/            # URP render pipeline assets
-├── Starter Assets/      # Unity Starter Assets (TPS controller, input system)
-└── UI/                  # UI sprites and icons
+├── Settings/            # URP render pipeline ayarları
+├── Starter Assets/      # Unity Starter Assets (TPS kontrolcüsü, input sistemi)
+└── UI/                  # Arayüz görselleri ve ikonlar
 ```
 
-## Scripts Overview
+## Script Detayları
 
-### Player
-| Script | Role |
-|--------|------|
-| `WeaponController.cs` | Weapon draw/holster, aim mode with FOV zoom, raycast shooting with bullet trails |
-| `CombatSystem.cs` | Combat logic and damage dealing |
-| `PlayerDeath.cs` | Player death handling |
-| `IDamageable.cs` | Damage interface implemented by damageable entities |
+### Oyuncu (Player)
+| Script | Görevi |
+|--------|--------|
+| `WeaponController.cs` | Silah çekme/kılıflama, FOV yakınlaştırmalı nişan, raycast atış ve mermi izi efekti |
+| `CombatSystem.cs` | Savaş mantığı ve hasar verme |
+| `PlayerDeath.cs` | Oyuncu ölüm yönetimi |
+| `IDamageable.cs` | Hasar alabilir nesneler için arayüz (interface) |
 
-### Enemy
-| Script | Role |
-|--------|------|
-| `EnemyAI.cs` | NavMesh-based enemy behavior (patrol, chase, attack) |
-| `HealthSystem.cs` | Enemy health, damage reception, and death |
+### Düşman (Enemy)
+| Script | Görevi |
+|--------|--------|
+| `EnemyAI.cs` | NavMesh tabanlı düşman davranışı (devriye, takip, saldırı) |
+| `HealthSystem.cs` | Düşman canı, hasar alma ve ölüm |
 
-### Systems
-| Script | Role |
-|--------|------|
-| `Portal.cs` | Teleportation / scene transition system |
-| `GoldManager.cs` | Tracks collected gold across the game |
-| `GoldPickup.cs` | Individual gold coin pickup logic |
-| `KeyPickup.cs` | Key collection for unlocking doors |
-| `DoorController.cs` | Door open/close logic triggered by keys |
-| `GameFinish.cs` | Win condition detection and game completion flow |
-| `GraphicsManager.cs` | Runtime graphics quality settings |
+### Sistemler (Systems)
+| Script | Görevi |
+|--------|--------|
+| `Portal.cs` | Işınlanma / sahne geçiş sistemi |
+| `GoldManager.cs` | Oyun genelinde toplanan altın takibi |
+| `GoldPickup.cs` | Altın toplama mantığı |
+| `KeyPickup.cs` | Kapı açmak için anahtar toplama |
+| `DoorController.cs` | Anahtarla tetiklenen kapı açma/kapama |
+| `GameFinish.cs` | Kazanma koşulu ve oyun bitiş akışı |
+| `GraphicsManager.cs` | Çalışma zamanı grafik kalitesi ayarları |
 
-### UI
-| Script | Role |
-|--------|------|
-| `PlayerHUD.cs` | Health bar, gold counter, key inventory display |
-| `CrosshairController.cs` | Dynamic crosshair rendering |
-| `PauseMenu.cs` | Pause/resume functionality |
-| `MainMenuManager.cs` | Main menu navigation and scene loading |
-| `MenuAnimator.cs` | Menu transition animations |
-| `MenuButtonEffect.cs` | Button hover/click visual effects |
-| `MenuStyleApplier.cs` | Consistent UI styling across menus |
-| `WinScreenAnimator.cs` | Victory screen animations |
-| `HealthPickup.cs` | Health restoration pickup logic |
-| `AutoHideText.cs` | Auto-fading UI text for notifications |
+### Arayüz (UI)
+| Script | Görevi |
+|--------|--------|
+| `PlayerHUD.cs` | Can barı, altın sayacı, anahtar envanteri gösterimi |
+| `CrosshairController.cs` | Dinamik nişangah |
+| `PauseMenu.cs` | Oyunu durdurma/devam ettirme |
+| `MainMenuManager.cs` | Ana menü navigasyonu ve sahne yükleme |
+| `MenuAnimator.cs` | Menü geçiş animasyonları |
+| `MenuButtonEffect.cs` | Buton hover/tıklama görsel efektleri |
+| `MenuStyleApplier.cs` | Menüler arası tutarlı stil uygulama |
+| `WinScreenAnimator.cs` | Zafer ekranı animasyonları |
+| `HealthPickup.cs` | Can yenileme eşyası mantığı |
+| `AutoHideText.cs` | Bildirimler için otomatik kaybolan yazı |
 
-## Tech Stack
+## Teknoloji
 
-- **Engine:** Unity 6 (6000.0.68f1) with Universal Render Pipeline (URP)
-- **Language:** C#
-- **Input:** Unity New Input System
-- **Camera:** Cinemachine (Unity.Cinemachine namespace)
-- **Navigation:** Unity NavMesh (enemy AI pathfinding)
-- **Base Controller:** Unity Starter Assets — Third Person Character Controller
+- **Motor:** Unity 6 (6000.0.68f1), Universal Render Pipeline (URP)
+- **Dil:** C#
+- **Girdi Sistemi:** Unity New Input System
+- **Kamera:** Cinemachine (Unity.Cinemachine)
+- **Navigasyon:** Unity NavMesh (düşman yol bulma)
+- **Temel Kontrolcü:** Unity Starter Assets — Third Person Character Controller
 
-## Asset Store Packages Used
+## Kullanılan Asset Store Paketleri
 
-The following packages are required but excluded from the repository due to file size. Import them via Unity Package Manager or Asset Store after cloning:
+Aşağıdaki paketler dosya boyutu nedeniyle depoya dahil edilmemiştir. Projeyi klonladıktan sonra Unity Asset Store üzerinden içe aktarın:
 
-- **Pirate Customized** — Pirate character model and textures
-- **Basic Bandit** — Enemy character model
-- **Stylized Pirate Ship** — Environment prop
-- **Island** — Environment terrain and props
-- **4K Tiled Ground Textures p1** — Ground textures
-- **Rust Key** — Key model for collectibles
-- **SciFi Office Lite** — Future-era environment assets
-- **Sci-Fi Styled Modular Pack** — Future-era modular building pieces
-- **LiquidFire Package 4** — VFX effects
-- **Sprite Muzzle Flashes** — Gun muzzle flash sprites
-- **SlimUI** — UI framework
-- **TextMesh Pro** — Text rendering (usually included with Unity)
+- **Pirate Customized** — Korsan karakter modeli ve dokuları
+- **Basic Bandit** — Düşman karakter modeli
+- **Stylized Pirate Ship** — Korsan gemisi çevre objesi
+- **Island** — Ada arazisi ve çevre objeleri
+- **4K Tiled Ground Textures p1** — Zemin dokuları
+- **Rust Key** — Toplanabilir anahtar modeli
+- **SciFi Office Lite** — Gelecek dönemi çevre varlıkları
+- **Sci-Fi Styled Modular Pack** — Gelecek dönemi modüler yapı parçaları
+- **LiquidFire Package 4** — Görsel efektler (VFX)
+- **Sprite Muzzle Flashes** — Namlu parlaması spriteları
+- **SlimUI** — Arayüz çerçevesi
+- **TextMesh Pro** — Metin oluşturma (genellikle Unity ile birlikte gelir)
 
-## Getting Started
+## Kurulum
 
-1. Clone the repository:
+1. Depoyu klonlayın:
    ```bash
    git clone https://github.com/KeremUUnal/tps_game_project.git
    ```
 
-2. Open the project in **Unity 6 (6000.0.68f1)** or later
+2. Projeyi **Unity 6 (6000.0.68f1)** veya üzeri sürümle açın
 
-3. Import the required Asset Store packages listed above
+3. Yukarıda listelenen Asset Store paketlerini içe aktarın
 
-4. Open `Assets/Scenes/MainMenu.unity` or `Assets/Scenes/Level_Past.unity`
+4. `Assets/Scenes/MainMenu.unity` veya `Assets/Scenes/Level_Past.unity` sahnesini açın
 
-5. Press **Play**
+5. **Play** tuşuna basın
 
-## Controls
+## Kontroller
 
-| Input | Action |
-|-------|--------|
-| `WASD` | Move |
-| `Mouse` | Look around |
-| `Space` | Jump |
-| `Left Shift` | Sprint |
-| `Q` | Draw / Holster weapon |
-| `Right Click` | Aim (zoom) |
-| `Left Click` | Shoot |
-| `Escape` | Pause menu |
+| Tuş | Eylem |
+|-----|-------|
+| `WASD` | Hareket |
+| `Fare` | Etrafına bakınma |
+| `Space` | Zıplama |
+| `Left Shift` | Koşma |
+| `Q` | Silah çekme / kılıflama |
+| `Sağ Tık` | Nişan alma (yakınlaştırma) |
+| `Sol Tık` | Ateş etme |
+| `Escape` | Duraklat menüsü |
 
-## License
+## Lisans
 
-This project is developed for academic purposes.
+Bu proje akademik amaçlarla geliştirilmiştir.
 
 ---
 
-*Built with Unity 6 & URP*
+*Unity 6 & URP ile geliştirilmiştir*
