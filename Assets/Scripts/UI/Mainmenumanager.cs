@@ -23,7 +23,8 @@ public class MainMenuManager : MonoBehaviour
     [Header("Sahne")]
     [SerializeField] private string gameSceneName = "Playground";
 
-    private Resolution[] resolutions;
+    // Filtrelenmiþ çözünürlük listesi — dropdown ile birebir eþleþir
+    private List<Resolution> filteredResolutions = new List<Resolution>();
 
     private void Start()
     {
@@ -66,22 +67,41 @@ public class MainMenuManager : MonoBehaviour
     private void SetupResolutionDropdown()
     {
         if (resolutionDropdown == null) return;
-        resolutions = Screen.resolutions;
+
+        Resolution[] allResolutions = Screen.resolutions;
+        filteredResolutions.Clear();
         resolutionDropdown.ClearOptions();
+
         List<string> options = new List<string>();
+        HashSet<string> seen = new HashSet<string>();
         int currentIndex = 0;
 
-        for (int i = 0; i < resolutions.Length; i++)
+        // Kaydedilmiþ çözünürlüðü oku
+        int savedWidth = PlayerPrefs.GetInt("ResWidth", Screen.currentResolution.width);
+        int savedHeight = PlayerPrefs.GetInt("ResHeight", Screen.currentResolution.height);
+
+        for (int i = 0; i < allResolutions.Length; i++)
         {
-            string option = resolutions[i].width + " x " + resolutions[i].height;
-            if (!options.Contains(option)) options.Add(option);
-            if (resolutions[i].width == Screen.currentResolution.width &&
-                resolutions[i].height == Screen.currentResolution.height)
-                currentIndex = options.Count - 1;
+            string key = allResolutions[i].width + "x" + allResolutions[i].height;
+
+            // Ayný geniþlik x yükseklik kombinasyonunu sadece bir kere ekle
+            if (seen.Contains(key)) continue;
+            seen.Add(key);
+
+            string option = allResolutions[i].width + " x " + allResolutions[i].height;
+            options.Add(option);
+            filteredResolutions.Add(allResolutions[i]);
+
+            // Kaydedilmiþ veya mevcut çözünürlüðü bul
+            if (allResolutions[i].width == savedWidth &&
+                allResolutions[i].height == savedHeight)
+            {
+                currentIndex = filteredResolutions.Count - 1;
+            }
         }
 
         resolutionDropdown.AddOptions(options);
-        resolutionDropdown.value = currentIndex;
+        resolutionDropdown.SetValueWithoutNotify(currentIndex);
         resolutionDropdown.onValueChanged.AddListener(OnResolutionChanged);
     }
 
@@ -130,7 +150,6 @@ public class MainMenuManager : MonoBehaviour
         PlayerPrefs.SetInt("Quality", index);
         PlayerPrefs.Save();
 
-        // GraphicsManager varsa onu kullan, yoksa basit QualitySettings
         if (GraphicsManager.Instance != null)
             GraphicsManager.Instance.ApplyQuality(index);
         else
@@ -139,15 +158,22 @@ public class MainMenuManager : MonoBehaviour
 
     private void OnResolutionChanged(int index)
     {
-        if (index < resolutions.Length)
+        if (index >= 0 && index < filteredResolutions.Count)
         {
-            Resolution res = resolutions[index];
+            Resolution res = filteredResolutions[index];
             Screen.SetResolution(res.width, res.height, Screen.fullScreen);
+
+            // Seçimi kaydet — oyun yeniden açýlýnca hatýrlasýn
+            PlayerPrefs.SetInt("ResWidth", res.width);
+            PlayerPrefs.SetInt("ResHeight", res.height);
+            PlayerPrefs.Save();
         }
     }
 
     private void OnFullscreenChanged(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
+        PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
+        PlayerPrefs.Save();
     }
 }
